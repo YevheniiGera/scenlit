@@ -1,0 +1,18 @@
+# Runs the tests on every push to main and every pull request.
+# On a Mac, where Scenlit is developed: Chrome is already on the runner, and the tests use the Mac's own voice.
+name: Tests
+on:
+  push: { branches: [main] }
+  pull_request:
+permissions: { contents: read }
+jobs:
+  test:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: brew install ffmpeg
+      - run: npm ci
+      - run: npm test

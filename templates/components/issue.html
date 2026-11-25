@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" data-state="new">
+<head>
+<meta charset="utf-8">
+<title>Issue</title>
+<meta name="scenlit:host" content="tracker.example.com/APP-128">
+<!-- A ticket in an issue tracker. A generic tracker screen, not any one product's.
+     States:  new (just filed) · assigned (someone took it) · done (closed)
+     Slots:   project, id, title, body, reporter, assignee, step1, step2, step3
+     Controls: "Assign to me", "Mark as done" -->
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f7f8fa; color: #172b4d; font: 15px/1.55 -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  header { height: 54px; display: flex; align-items: center; gap: 12px; padding: 0 32px; background: #fff; border-bottom: 1px solid #dfe1e6; color: #5e6c84; }
+  header b { color: #172b4d; }
+  main { max-width: 1040px; margin: 0 auto; padding: 30px 24px; display: grid; grid-template-columns: 1fr 280px; gap: 32px; }
+  h1 { font-size: 26px; font-weight: 600; margin: 0 0 14px; }
+  .card { background: #fff; border: 1px solid #dfe1e6; border-radius: 10px; padding: 20px 22px; }
+  h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: #5e6c84; margin: 18px 0 8px; }
+  ol { margin: 0; padding-left: 20px; }
+  dl { display: grid; grid-template-columns: 96px 1fr; gap: 12px 10px; margin: 0; } dt { color: #5e6c84; } dd { margin: 0; }
+  .pill { display: inline-block; border-radius: 4px; padding: 2px 10px; font-weight: 700; font-size: 12px; text-transform: uppercase; background: #dfe1e6; color: #42526e; transition: background .3s, color .3s; }
+  .who { color: #97a0af; } .who .name { display: none; }
+  .act { display: flex; gap: 10px; margin-top: 18px; }
+  button { font: inherit; font-weight: 600; padding: 8px 16px; border-radius: 6px; border: 1px solid #c1c7d0; background: #fff; cursor: pointer; }
+  .s-new, .s-assigned, .s-done { display: none; } [data-state="new"] .s-new { display: inline; }
+
+  [data-state="assigned"] .pill { background: #deebff; color: #0747a6; } [data-state="assigned"] .s-assigned { display: inline; }
+  [data-state="done"] .pill { background: #e3fcef; color: #006644; } [data-state="done"] .s-done { display: inline; }
+  [data-state="assigned"] .who, [data-state="done"] .who { color: #172b4d; }
+  [data-state="assigned"] .who .none, [data-state="done"] .who .none { display: none; }
+  [data-state="assigned"] .who .name, [data-state="done"] .who .name { display: inline; }
+</style>
+</head>
+<body>
+  <header><b data-slot="project">App</b><span>/</span><span data-slot="id">APP-128</span></header>
+  <main>
+    <div>
+      <h1 data-slot="title">Checkout accepts an invalid card</h1>
+      <div class="card" data-testid="issue">
+        <div data-slot="body">Paying with a card that fails the number check still places the order.</div>
+        <h3>Steps to reproduce</h3>
+        <ol><li data-slot="step1">Add any item to the cart and go to checkout.</li><li data-slot="step2">Enter the card 4242 4242 4242 4241.</li><li data-slot="step3">Press Pay: the order is confirmed.</li></ol>
+        <div class="act"><button>Assign to me</button><button>Mark as done</button></div>
+      </div>
+    </div>
+    <div class="card" data-testid="details">
+      <dl><dt>Status</dt><dd><span class="pill"><span class="s-new">New</span><span class="s-assigned">In progress</span><span class="s-done">Done</span></span></dd>
+        <dt>Assignee</dt><dd class="who"><span class="none">Unassigned</span><span class="name" data-slot="assignee">Jonas Weber</span></dd>
+        <dt>Reporter</dt><dd data-slot="reporter">Release check</dd><dt>Priority</dt><dd>High</dd></dl>
+    </div>
+  </main>
+</body>
+</html>

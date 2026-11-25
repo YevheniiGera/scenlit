@@ -1,0 +1,27 @@
+name: Scenlit
+description: Run your Scenlit scenes on every pull request or release. A scene that fails is a flow that broke; the films, posts and screenshots are kept as an artifact.
+branding: { icon: film, color: yellow }
+inputs:
+  working-directory: { description: The folder that holds .scenlit/, default: "." }
+  artifact: { description: Name of the uploaded artifact, default: scenlit }
+runs:
+  using: composite
+  steps:
+    # CI is set, so scenes replay their recordings and never call a model: a step that is not recorded fails
+    - name: Run the scenes
+      id: run
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set +e
+        npx scenlit run --all --strict
+        echo "code=$?" >> "$GITHUB_OUTPUT"
+    - name: Keep the films, posts and screenshots
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact }}
+        path: ${{ inputs.working-directory }}/.scenlit/output
+    - name: Fail when a scene failed
+      if: steps.run.outputs.code != '0'
+      shell: bash
+      run: exit 1

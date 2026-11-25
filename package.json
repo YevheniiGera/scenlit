@@ -1,0 +1,62 @@
+{
+  "name": "scenlit",
+  "version": "0.1.0",
+  "description": "Product films, posts, docs screenshots and guides made from your real app, and made again when the app changes.",
+  "keywords": [
+    "product-video",
+    "demo-video",
+    "screen-recording",
+    "screenshots",
+    "docs",
+    "playwright",
+    "chrome",
+    "coding-agent",
+    "marketing",
+    "film"
+  ],
+  "license": "Apache-2.0",
+  "author": "Certyn (https://certyn.io)",
+  "type": "module",
+  "bin": {
+    "scenlit": "bin/cli.mjs"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./src/index.mjs"
+    },
+    "./pieces": {
+      "default": "./src/pieces.mjs"
+    }
+  },
+  "types": "./index.d.ts",
+  "files": [
+    "bin",
+    "src",
+    "templates",
+    "index.d.ts",
+    "schema.json",
+    "action.yml",
+    "README.md",
+    "LICENSE",
+    "NOTICE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "1.56.1"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": "*"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/sdk": {
+      "optional": true
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Scenlit settings (.scenlit/config.json)",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "app": { "type": "object", "description": "The app the scenes run against.", "properties": {
+      "url": { "type": "string", "description": "Where the app runs, for example http://localhost:3000" },
+      "start": { "type": ["string", "null"], "description": "The command that starts it when it is not up, for example npm run dev" },
+      "as": { "type": ["string", "null"], "description": "The address films show in the window's bar, for example acme.com" } } },
+    "brand": { "type": "object", "description": "Colours and fonts of films and posts.", "properties": {
+      "name": { "type": "string" }, "url": { "type": "string" },
+      "theme": { "enum": ["night", "paper", "plain"], "description": "A set of colours to start from; colours written here win." },
+      "background": { "type": "string" }, "glow": { "type": "string" }, "text": { "type": "string" }, "muted": { "type": "string" }, "accent": { "type": "string" },
+      "font": { "type": "string" }, "titleFont": { "type": "string" }, "fontImport": { "type": ["string", "null"], "description": "A stylesheet address that brings the fonts." } } },
+    "look": { "$ref": "#/definitions/look", "description": "How the app is captured." },
+    "looks": { "type": "object", "description": "Other looks, each laid over `look`. Built in: phone, tablet, dark, light, cartoon, sketch, blueprint.", "additionalProperties": { "$ref": "#/definitions/look" } },
+    "scenes": { "type": "array", "items": { "type": "string" }, "description": "Folders searched for *.scene.mjs / .js / .ts besides .scenlit/scenes." },
+    "sessions": { "type": "object", "additionalProperties": { "type": "string" }, "description": "Saved logins kept elsewhere, by name, for example a Playwright storage state file." },
+    "data": { "type": "object", "description": "Sample data for every scene.", "properties": {
+      "replace": { "type": "object", "additionalProperties": { "type": "string" }, "description": "Text to swap wherever the page shows it (whole words)." },
+      "blur": { "type": "array", "items": { "type": "string" }, "description": "CSS selectors to blur." },
+      "date": { "type": ["string", "null"], "description": "The date and time the app believes it is." } } },
+    "style": { "$ref": "#/definitions/style", "description": "How films and posts look." },
+    "portal": { "type": ["string", "null"], "description": "The address of the platform `scenlit publish` sends videos to. SCENLIT_PORTAL or --to say it for one run." },
+    "product": { "type": ["string", "null"], "pattern": "^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$", "description": "The product these videos belong to on the platform: its page is <platform>/<product>. Else made from the brand's name." },
+    "save": { "type": "object", "description": "Where every scene's results are also kept in your project. {scene} and {shape} in a path are filled in. A copy is made on every run.", "additionalProperties": false, "properties": {
+      "film": { "type": "string", "description": "The film with its player and all it needs: a folder for any web host." },
+      "video": { "type": ["string", "object"], "description": "The MP4 when it is exported, its captions and poster beside it; or a place for each shape: { wide, square, vertical }." },
+      "posts": { "type": "string" }, "guide": { "type": "string" }, "thumbnail": { "type": "string" } } },
+    "formats": { "type": "object", "description": "Kinds of film, each a set of style changes (and, when it needs them, brand, look and shape). Built in: demo, tutorial, feature, trailer, canvas, launch, recording, short, keynote, loop, source.", "additionalProperties": { "$ref": "#/definitions/style" } },
+    "model": { "type": "object", "description": "Who works out plain-language steps the first time.", "properties": {
+      "provider": { "enum": ["claude-code", "anthropic"] }, "model": { "type": ["string", "null"] } } },
+    "voice": { "type": "object", "description": "Narration. Paid providers only run from `scenlit voice`.", "properties": {
+      "provider": { "type": "string", "description": "none, say, elevenlabs, openai, command, or a module of your own such as ./tools/voice.mjs" },
+      "voice": { "type": ["string", "null"] }, "model": { "type": ["string", "null"] },
+      "command": { "type": "string", "description": "For the command provider: a program with {file}, and {text} or the line on standard input." },
+      "says": { "type": "object", "additionalProperties": { "type": "string" }, "description": "Pronunciations: what to say for a word, for example { \"Scenlit\": \"Seen lit\" }." },
+      "voices": { "type": "object", "description": "Settings per language, over the main ones: { \"de\": { \"voice\": \"Anna\" } }." } } }
+  },
+  "definitions": {
+    "look": { "type": "object", "properties": {
+      "viewport": { "type": "object", "properties": { "width": { "type": "number" }, "height": { "type": "number" } }, "description": "A smaller viewport gives bigger type in the film." },
+      "device": { "enum": ["desktop", "phone", "tablet"] }, "scheme": { "enum": ["dark", "light", null] }, "locale": { "type": ["string", "null"] },
+      "hide": { "type": "array", "items": { "type": "string" }, "description": "CSS selectors to hide: cookie banners, chat bubbles." },
+      "css": { "type": "string" }, "settle": { "type": "number", "description": "Milliseconds to wait after each action." },
+      "motion": { "type": "boolean" }, "vector": { "type": "boolean" },
+      "filter": { "type": ["string", "null"], "description": "A CSS filter laid on every picture. Built in: url(#nt-sketch), url(#nt-toon), url(#nt-blueprint)." },
+      "style": { "description": "Film style changes this look brings (background, window, cursor, captions, motion)." },
+      "brand": { "type": "object", "description": "Colours this look brings for the words, over the brand's: text, muted, accent." } } },
+    "style": { "type": "object", "properties": {
+      "background": { "type": "object", "properties": { "kind": { "enum": ["glow", "gradient", "solid", "image"] }, "colors": { "type": ["array", "null"], "items": { "type": "string" } }, "angle": { "type": "number" }, "image": { "type": ["string", "null"] }, "dots": { "type": "boolean" } } },
+      "window": { "type": "object", "properties": { "bar": { "enum": ["dark", "light", "none"] }, "radius": { "type": "number" }, "shadow": { "enum": ["soft", "hard", "flat", "none"] }, "scale": { "type": "number" }, "fill": { "type": "boolean", "description": "The page is the whole frame, edge to edge (a component made to be filmed)" } } },
+      "cursor": { "type": "object", "properties": { "size": { "type": "number" }, "color": { "type": "string" }, "ring": { "type": "boolean" }, "name": { "type": ["string", "null"], "description": "Words beside the cursor, as on a shared canvas" }, "show": { "type": "boolean", "description": "false: no cursor" }, "guests": { "type": "array", "description": "Others' cursors about the canvas", "items": { "type": "object", "properties": { "name": { "type": "string" }, "color": { "type": "string" } }, "required": ["name"] } } } },
+      "board": { "type": "boolean", "description": "The places of the film are frames side by side on one canvas, and the camera travels between them" },
+      "select": { "type": ["string", "null"], "description": "The colour of a selection (the select spotlight)" },
+      "camera": { "type": "object", "properties": { "zoom": { "type": ["number", "null"], "description": "1 keeps the camera still." }, "speed": { "type": "number" } } },
+      "captions": { "type": "object", "properties": { "show": { "type": "boolean" }, "position": { "enum": ["bottom", "top"] }, "size": { "type": "number" }, "look": { "enum": ["pill", "plain", "bold"] } } },
+      "player": { "type": "object", "description": "The player around the film (never part of an MP4).", "properties": {
+        "accent": { "type": ["string", "null"], "description": "The colour of its controls. The brand's accent when not given." },
+        "controls": { "description": "Which controls it has, in this order; false for none.", "oneOf": [{ "const": false }, { "type": "array", "items": { "enum": ["play", "scrub", "time", "sound", "captions", "speed", "chapters", "fullscreen"] } }] },
+        "marks": { "enum": [true, false, "chapters", "steps"], "description": "The places a viewer can go to, marked on the bar: the film's chapters, or without any, each step that says something. false: none." },
+        "poster": { "type": ["number", "string", "null"], "description": "What waits before the film is played: seconds into the film, or a picture in your project." },
+        "captions": { "type": "boolean" }, "speed": { "type": "number" }, "autoplay": { "type": "boolean" }, "loop": { "type": "boolean" }, "tour": { "type": "boolean" } } },
+      "titles": { "type": "object", "properties": { "show": { "type": "boolean" }, "animation": { "enum": ["rise", "fade", "words", "slam"] }, "underline": { "type": "boolean" }, "size": { "type": "number" }, "align": { "enum": ["center", "left"] } } },
+      "end": { "type": "object", "properties": { "show": { "type": "boolean" }, "button": { "type": ["string", "null"] } } },
+      "logo": { "type": ["string", "null"] }, "pace": { "type": "number" },
+      "motion": { "type": "object", "description": "Which piece moves what (scenlit motion list). Your own pieces go in .scenlit/motion.js.", "properties": { "title": { "type": "string" }, "enter": { "type": "string" }, "exit": { "type": "string" }, "cut": { "type": "string" }, "cursor": { "type": "string" }, "click": { "type": "string" }, "spotlight": { "type": "string" } } }, "spotlight": { "type": "number" }, "source": { "description": "Show the scene file down the left, the line now playing lit (wide films)", "type": ["boolean", "object"] }, "css": { "type": ["string", "null"] } } }
+  }
+}

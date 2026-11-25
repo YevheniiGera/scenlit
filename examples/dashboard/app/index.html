@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Ledgerly</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 -apple-system,"Helvetica Neue",Arial,sans-serif;background:#f4f6f8;color:#16202b}
+header{display:flex;align-items:center;gap:20px;height:56px;padding:0 24px;background:#fff;border-bottom:1px solid #dde3ea}
+.logo{font-weight:700;font-size:17px;color:#1f5eff}.nav a{margin-right:18px;color:#4a5868;text-decoration:none}.nav a.on{color:#16202b;font-weight:600}
+.search{margin-left:auto;width:220px;padding:7px 12px;border:1px solid #c5cfda;border-radius:8px;font:inherit}
+.bell{border:0;background:none;font-size:18px;cursor:pointer}.avatar{width:30px;height:30px;border-radius:50%;background:#1f5eff;color:#fff;display:grid;place-items:center;font-weight:600;font-size:12px}
+main{max-width:1120px;margin:0 auto;padding:28px 24px 60px}.top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+h1{margin:0;font-size:24px}.today{color:#6a7888}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.card{background:#fff;border:1px solid #dde3ea;border-radius:12px;padding:16px 18px}.card small{color:#6a7888}.card b{display:block;font-size:26px;margin-top:2px}
+.bar{display:flex;gap:12px;align-items:center;margin-bottom:10px}select,.btn{font:inherit;padding:7px 12px;border:1px solid #c5cfda;border-radius:8px;background:#fff;cursor:pointer}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #dde3ea;border-radius:12px;overflow:hidden}
+th,td{text-align:left;padding:11px 16px;border-bottom:1px solid #edf0f4}th{font-size:12px;color:#6a7888;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:0}tbody tr{cursor:pointer}tbody tr:hover{background:#f7f9fc}.num{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border-radius:20px;padding:1px 10px;font-size:12px;font-weight:600}.Active{background:#e3f4ea;color:#1c7a45}.Past{background:#fdecd8;color:#a85a00}.Cancelled{background:#eceff3;color:#5d6b7a}
+#panel{position:fixed;top:56px;right:0;bottom:0;width:360px;background:#fff;border-left:1px solid #dde3ea;padding:24px;transform:translateX(100%);transition:transform .2s}
+#panel.open{transform:none}#panel h2{margin:0 0 4px}#panel dl{display:grid;grid-template-columns:110px 1fr;gap:8px 12px;margin:18px 0}dt{color:#6a7888}dd{margin:0}
+.help{position:fixed;right:20px;bottom:20px;background:#16202b;color:#fff;border-radius:22px;padding:10px 16px;font-weight:600}
+footer{text-align:center;color:#8a97a5;padding:20px;font-size:12px}
+</style></head><body>
+<header><div class="logo">Ledgerly</div><nav class="nav"><a class="on" href="#">Customers</a><a href="#">Invoices</a><a href="#">Reports</a></nav>
+<input class="search" type="search" placeholder="Search" aria-label="Search"><button class="bell" aria-label="Notifications">🔔</button><div class="avatar" title="Account">MR</div></header>
+<main><div class="top"><div><h1>Customers</h1><div class="today" id="today"></div></div><button class="btn" id="export">Export CSV</button></div>
+<div class="cards"><div class="card"><small>Monthly revenue</small><b id="mrr" data-testid="mrr"></b></div><div class="card"><small>Active customers</small><b id="active"></b></div><div class="card"><small>Past due</small><b id="due"></b></div></div>
+<div class="bar"><label for="status">Status</label><select id="status" name="Status"><option>All</option><option>Active</option><option>Past due</option><option>Cancelled</option></select><span class="today" id="count"></span></div>
+<table><thead><tr><th>Customer</th><th>Email</th><th>Plan</th><th>Status</th><th class="num">MRR</th></tr></thead><tbody id="rows"></tbody></table></main>
+<aside id="panel"></aside><div class="help">Need help?</div><footer>Ledgerly demo · not a real product</footer>
+<script>
+let all=[];const $=(id)=>document.getElementById(id),money=(n)=>"$"+n.toLocaleString("en-US");
+function draw(){const f=$("status").value,list=all.filter(c=>f==="All"||c.status===f);
+ $("rows").innerHTML=list.map(c=>`<tr data-name="${c.name}"><td><b>${c.name}</b></td><td class="email">${c.email}</td><td>${c.plan}</td><td><span class="pill ${c.status.split(" ")[0]}">${c.status}</span></td><td class="num">${money(c.mrr)}</td></tr>`).join("");
+ $("count").textContent=list.length+" of "+all.length;
+ for(const tr of $("rows").children)tr.onclick=()=>open(all.find(c=>c.name===tr.dataset.name))}
+function open(c){$("panel").innerHTML=`<h2>${c.name}</h2><span class="pill ${c.status.split(" ")[0]}">${c.status}</span><dl><dt>Email</dt><dd class="email">${c.email}</dd><dt>Plan</dt><dd>${c.plan}</dd><dt>MRR</dt><dd>${money(c.mrr)}</dd><dt>Customer since</dt><dd>${new Date(c.since).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</dd></dl><button class="btn" onclick="document.getElementById('panel').classList.remove('open')">Close</button>`;$("panel").classList.add("open")}
+$("status").onchange=draw;$("export").onclick=()=>{$("export").textContent="Exported"};
+$("today").textContent=new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+fetch("/api/customers").then(r=>r.json()).then(d=>{all=d;const a=d.filter(c=>c.status==="Active");
+ $("mrr").textContent=money(a.reduce((s,c)=>s+c.mrr,0));$("active").textContent=a.length;$("due").textContent=d.filter(c=>c.status==="Past due").length;draw()});
+</script></body></html>

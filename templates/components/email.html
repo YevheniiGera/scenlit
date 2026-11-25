@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-state="inbox">
+<head>
+<meta charset="utf-8">
+<title>Mail</title>
+<meta name="scenlit:host" content="mail.example.com">
+<!-- A mail inbox. A generic mail screen, not any one product's.
+     States:  inbox (the list, the new mail unread on top) · open (the mail is open beside the list)
+     Slots:   from, subject, preview, body, button, other1, other2, time
+     Controls: the new mail's row (click its subject), the button in the mail (its text is the "button" slot) -->
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; height: 100vh; display: grid; grid-template-columns: 200px 380px 1fr; color: #202124; background: #f6f8fc; font: 14px/1.5 -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  nav { padding: 20px 14px; } nav b { display: block; font-size: 18px; margin: 0 8px 18px; }
+  nav div { padding: 7px 14px; border-radius: 18px; } nav .on { background: #d3e3fd; font-weight: 600; }
+  .list { background: #fff; border-radius: 14px 0 0 14px; margin: 14px 0; overflow: hidden; border-right: 1px solid #eceff3; }
+  .row { padding: 14px 18px; border-bottom: 1px solid #eceff3; cursor: pointer; }
+  .row b { display: block; } .row span { color: #5f6368; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row.new { background: #f2f6fc; } .row.new .subject { font-weight: 700; color: #202124; }
+  .read { background: #fff; border-radius: 0 14px 14px 0; margin: 14px 14px 14px 0; padding: 36px 44px; }
+  .empty { color: #9aa0a6; text-align: center; margin-top: 30vh; }
+  .mail { display: none; } .mail h1 { font-size: 24px; font-weight: 500; margin: 0 0 6px; } .mail small { color: #5f6368; }
+  .mail p { font-size: 16px; line-height: 1.6; max-width: 560px; margin: 26px 0; white-space: pre-line; }
+  .mail button { font: inherit; font-weight: 600; font-size: 15px; padding: 11px 22px; border-radius: 8px; border: 0; background: #1a73e8; color: #fff; cursor: pointer; }
+
+  [data-state="open"] .empty { display: none; } [data-state="open"] .mail { display: block; }
+  [data-state="open"] .row.new { background: #e8f0fe; } [data-state="open"] .row.new .subject { font-weight: 500; }
+</style>
+</head>
+<body>
+  <nav><b>Mail</b><div class="on">Inbox</div><div>Sent</div><div>Drafts</div><div>Archive</div></nav>
+  <div class="list">
+    <div class="row new" data-testid="new-mail" onclick="document.documentElement.dataset.state='open'"><b data-slot="from">Acme</b><span class="subject" data-slot="subject">Your weekly report is ready</span><span data-slot="preview">Three things changed since last week.</span></div>
+    <div class="row"><b>Billing</b><span data-slot="other1">Your receipt for March</span><span>Thanks for your payment.</span></div>
+    <div class="row"><b>Jonas Weber</b><span data-slot="other2">Notes from Tuesday</span><span>Here is what we agreed on.</span></div>
+  </div>
+  <div class="read">
+    <div class="empty">Select a message to read it.</div>
+    <div class="mail" data-testid="mail"><h1 data-slot="subject">Your weekly report is ready</h1><small>from <span data-slot="from">Acme</span> · <span data-slot="time">9:15</span></small>
+      <p data-slot="body">Three things changed since last week. The summary is one click away.</p>
+      <button data-slot="button">Open the report</button></div>
+  </div>
+</body>
+</html>

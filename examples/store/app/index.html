@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Acme Store</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 -apple-system,"Helvetica Neue",Arial,sans-serif;color:#1c1b19;background:#f6f4ef}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:#fff;border-bottom:1px solid #e6e2d8}
+.logo{font-weight:700;font-size:19px;letter-spacing:-.01em}.logo i{color:#2f6f4f;font-style:normal}
+nav a{margin-left:28px;color:#55524b;text-decoration:none}
+.cartbtn{border:1px solid #d9d4c7;background:#fff;border-radius:8px;padding:8px 14px;font:inherit;cursor:pointer}
+.cartbtn b{background:#2f6f4f;color:#fff;border-radius:10px;padding:1px 8px;margin-left:6px;font-size:13px}
+main{max-width:1080px;margin:0 auto;padding:40px 24px}h1{font-size:30px;letter-spacing:-.02em;margin:0 0 6px}.sub{color:#6b675e;margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:#fff;border:1px solid #e6e2d8;border-radius:12px;overflow:hidden}
+.pic{height:170px;display:grid;place-items:center;font-size:64px}
+.card .in{padding:16px 18px 18px}.card h3{margin:0;font-size:17px}.price{color:#6b675e;margin:2px 0 14px}
+button.add,button.go{width:100%;border:0;border-radius:8px;background:#1c1b19;color:#fff;font:600 15px/1 inherit;padding:13px;cursor:pointer}
+button.add.done{background:#e9f2ec;color:#2f6f4f}
+.panel{background:#fff;border:1px solid #e6e2d8;border-radius:12px;padding:26px 28px;max-width:560px}
+.row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #efece4}.total{font-weight:700;border:0;padding-top:16px}
+label{display:block;font-weight:600;margin:16px 0 6px}input{width:100%;font:inherit;padding:11px 12px;border:1px solid #cfc9bb;border-radius:8px}
+.go{margin-top:22px}.ok{display:inline-block;background:#e9f2ec;color:#2f6f4f;border-radius:20px;padding:4px 14px;font-weight:600;margin-bottom:14px}
+</style></head><body>
+<header><div class="logo">acme<i>.</i>store</div><div><nav style="display:inline"><a href="#/">Shop</a><a href="#/">About</a></nav>
+<button class="cartbtn" data-testid="cart" style="margin-left:28px" onclick="location.hash='#/cart'">Cart<b id="n">0</b></button></div></header>
+<main id="m"></main>
+<script>
+const P=[["Trail Mug",24,"☕","#efe6d6"],["Canvas Tote",38,"👜","#dfe9e2"],["Field Notebook",16,"📓","#e6e2ee"]],cart=[];
+const m=document.getElementById("m"),sum=()=>cart.reduce((s,i)=>s+P[i][1],0);
+function add(i,b){cart.push(i);b.textContent="Added";b.classList.add("done");document.getElementById("n").textContent=cart.length}
+function pay(){const s=document.getElementById("status");s.textContent="Paying…";setTimeout(()=>location.hash="#/paid",500)}
+function draw(){const h=location.hash||"#/";
+ if(h=="#/cart")m.innerHTML=`<h1>Your cart</h1><p class="sub">${cart.length} items</p><div class="panel">${cart.map(i=>`<div class="row"><span>${P[i][0]}</span><span>$${P[i][1]}</span></div>`).join("")}<div class="row total"><span>Total</span><span>$${sum()}</span></div><button class="go" onclick="location.hash='#/checkout'">Continue to payment</button></div>`;
+ else if(h=="#/checkout")m.innerHTML=`<h1>Checkout</h1><p class="sub">Total $${sum()}</p><div class="panel"><label for="e">Email</label><input id="e" type="email" placeholder="you@example.com"><label for="c">Card number</label><input id="c" placeholder="1234 1234 1234 1234"><button class="go" onclick="pay()">Pay $${sum()}</button><p id="status" class="sub" style="margin:12px 0 0"></p></div>`;
+ else if(h=="#/paid")m.innerHTML=`<div class="panel" data-testid="order"><span class="ok" data-testid="order-status">Paid</span><h1>Thank you for your order</h1><p class="sub">We sent the receipt to your email. Your order of $${sum()} ships tomorrow.</p></div>`;
+ else m.innerHTML=`<h1>Things for the trail</h1><p class="sub">Three good things, made to last.</p><div class="grid">${P.map((p,i)=>`<div class="card"><div class="pic" style="background:${p[3]}">${p[2]}</div><div class="in"><h3>${p[0]}</h3><p class="price">$${p[1]}</p><button class="add" aria-label="Add ${p[0]} to cart" onclick="add(${i},this)">Add to cart</button></div></div>`).join("")}</div>`}
+addEventListener("hashchange",draw);draw();
+</script></body></html>

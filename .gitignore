@@ -1,0 +1,11 @@
+node_modules/
+.DS_Store
+examples/*/docs/
+
+# made again by running the examples' scenes
+examples/*/.scenlit/kit/
+examples/*/.scenlit/baseline/
+examples/*/.scenlit/voice/own-*
+
+# working notes, not for the public repo
+PLAN.md

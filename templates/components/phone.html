@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en" data-state="buzz">
+<head>
+<meta charset="utf-8">
+<title>Phone</title>
+<meta name="scenlit:host" content="phone">
+<!-- A phone on its lock screen, with one notification. Generic: not any one maker's.
+     Made to be laid over a film while it carries on:
+       await overlay("component:phone", { at: "right", data: { app: "Ledgerly", title: "Payment received", body: "…" } });
+     States:  buzz (the notification is there) · locked (only the clock)
+     Slots:   clock, date, app, initial (the letter in the icon), time, title, body
+     Looks:   ?icon=green | orange | red | black (the icon's colour; blue when left out)
+     What an overlay shows is the element marked data-overlay, with room around it for its shadow. -->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: transparent; }
+  body { padding: 48px; font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  .phone { width: 300px; height: 610px; border-radius: 46px; padding: 11px; background: #0d0f13; box-shadow: 0 0 0 2px #2f343d, 0 30px 70px -18px #000000b3; }
+  .screen { position: relative; height: 100%; border-radius: 36px; overflow: hidden; color: #fff; text-align: center; padding: 58px 14px 0;
+    background: radial-gradient(120% 70% at 20% 0%, #3d6ad6 0%, transparent 60%), radial-gradient(120% 80% at 100% 100%, #16794f 0%, transparent 62%), #10131b; }
+  .screen::before { content: ""; position: absolute; left: 50%; top: 12px; width: 88px; height: 24px; margin-left: -44px; border-radius: 14px; background: #05060a; }
+  .date { font-size: 15px; font-weight: 500; opacity: .85; }
+  .clock { font-size: 76px; font-weight: 600; line-height: 1; letter-spacing: -.03em; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .note { display: grid; grid-template-columns: 34px 1fr; gap: 10px; text-align: left; margin-top: 46px; padding: 11px 12px; border-radius: 18px; background: #ffffff2e; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); font-size: 13px; }
+  [data-state="locked"] .note { display: none; }
+  .icon { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: linear-gradient(140deg, #4f8df7, #1f5fd6); }
+  [data-icon="green"] .icon { background: linear-gradient(140deg, #27a971, #0f6a45); }
+  [data-icon="orange"] .icon { background: linear-gradient(140deg, #f5a03c, #d9641f); }
+  [data-icon="red"] .icon { background: linear-gradient(140deg, #ef6a5b, #c8321f); }
+  [data-icon="black"] .icon { background: linear-gradient(140deg, #3a3c44, #17181c); }
+  .top { display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; opacity: .8; }
+  .top b { font-weight: 600; }
+  .title { font-weight: 650; }
+  .body { opacity: .9; }
+  .bar { position: absolute; left: 50%; bottom: 9px; width: 108px; height: 4px; margin-left: -54px; border-radius: 4px; background: #ffffffb3; }
+</style>
+</head>
+<body>
+  <div class="phone" data-overlay data-testid="phone">
+    <div class="screen">
+      <div class="date" data-slot="date">Monday, 2 March</div>
+      <div class="clock" data-slot="clock">9:41</div>
+      <div class="note" data-testid="notification">
+        <span class="icon" data-slot="initial">M</span>
+        <div>
+          <div class="top"><b data-slot="app">Mail</b><span data-slot="time">now</span></div>
+          <div class="title" data-slot="title">A new message</div>
+          <div class="body" data-slot="body">Something happened that you will want to see.</div>
+        </div>
+      </div>
+      <div class="bar"></div>
+    </div>
+  </div>
+</body>
+</html>

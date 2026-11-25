@@ -1,0 +1,6 @@
+{
+  "app": { "url": "http://localhost:4173", "start": "node app/server.mjs", "as": "acme.store" },
+  "brand": { "name": "Acme Store", "url": "acme.store" },
+  "model": { "provider": "claude-code" },
+  "voice": { "provider": "say" }
+}

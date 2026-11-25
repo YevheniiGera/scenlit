@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" data-state="typed">
+<head>
+<meta charset="utf-8">
+<title>Terminal</title>
+<meta name="scenlit:host" content="Terminal">
+<!-- A terminal window with one command and its output.
+     States:  typed (the command, not run yet) · running (first lines of output) · done (all of it, and the result line)
+     Slots:   prompt, command, line1, line2, line3, result
+     Tip: zoom or point at { testid: "result" } once it is done. -->
+<style>
+  * { box-sizing: border-box; }
+  /* it fills the page: the film's own window is the terminal's window */
+  body { margin: 0; height: 100vh; background: #0d1117; font: 24px/1.85 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: #d8dbe2; }
+  .term { height: 100%; }
+  .bar { display: none; }
+  .body { padding: 64px 72px; }
+  .prompt { color: #5d6472; } .cmd { color: #f4f3ef; }
+  .out { margin-top: 10px; }
+  .out div { color: #8b93a3; opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s; }
+  .out div::before { content: "›"; color: #3a4254; margin-right: .7em; }
+  .out div:nth-child(2) { transition-delay: .18s; } .out div:nth-child(3) { transition-delay: .36s; }
+  .result { display: inline-block; margin-top: 22px; padding: .25em .8em .25em 1em; color: #a6f0b4; font-weight: 600;
+    background: linear-gradient(90deg, rgb(123 216 143 / .16), rgb(123 216 143 / .04)); box-shadow: inset 4px 0 0 #7bd88f;
+    opacity: 0; transform: translateY(6px); transition: opacity .35s .5s, transform .35s .5s; }
+  .cursor { display: inline-block; width: .55em; height: 1.05em; background: #d8dbe2; vertical-align: -.2em; margin-left: 6px; }
+
+  [data-state="running"] .out div:nth-child(-n+2), [data-state="done"] .out div { opacity: 1; transform: none; }
+  [data-state="done"] .result { opacity: 1; transform: none; }
+  [data-state="running"] .cursor, [data-state="done"] .cursor { display: none; }
+</style>
+</head>
+<body>
+  <div class="term" data-testid="terminal">
+    <div class="bar"><i></i><i></i><i></i></div>
+    <div class="body">
+      <div><span class="prompt" data-slot="prompt">~/app $</span> <span class="cmd" data-slot="command">npx scenlit run checkout</span><span class="cursor"></span></div>
+      <div class="out"><div data-slot="line1">scene checkout</div><div data-slot="line2">7 actions: 7 replayed, 0 from the model, 8.1s</div><div data-slot="line3">film:  .scenlit/output/checkout/film.html</div></div>
+      <div class="result" data-testid="result" data-slot="result">done: a film, 6 posts, a guide</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" data-state="running">
+<head>
+<meta charset="utf-8">
+<title>Pull request</title>
+<meta name="scenlit:host" content="git.example.com/acme/app/pull/212">
+<!-- A pull request's checks. Not any one product's page: a generic code-review screen.
+     States:  running (the last check is still going) · failed (it failed, merging is blocked) · passed (all green)
+     Slots (open("component:pull-request", { data: { title: "…" } })):
+       repo, title, number, author, check (the last check's name), going, failure, passed
+     Controls: "Details", "Merge pull request" -->
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f6f8fa; color: #1f2328; font: 15px/1.5 -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  header { height: 56px; display: flex; align-items: center; gap: 14px; padding: 0 32px; background: #fff; border-bottom: 1px solid #d1d9e0; }
+  header b { font-size: 16px; } header span { color: #59636e; }
+  main { max-width: 880px; margin: 0 auto; padding: 32px 24px; }
+  h1 { font-size: 26px; font-weight: 600; margin: 0 0 4px; } h1 small { color: #59636e; font-weight: 400; }
+  .meta { color: #59636e; margin-bottom: 24px; }
+  .open { display: inline-block; background: #1a7f37; color: #fff; border-radius: 20px; padding: 3px 12px; font-weight: 600; font-size: 13px; margin-right: 8px; }
+  .box { background: #fff; border: 1px solid #d1d9e0; border-radius: 10px; overflow: hidden; }
+  .box h2 { font-size: 15px; margin: 0; padding: 14px 18px; border-bottom: 1px solid #d1d9e0; }
+  .check { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid #eef1f4; }
+  .icon { width: 18px; height: 18px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 700; background: #1a7f37; transition: background .35s; }
+  .ok .icon::before { content: "✓"; }
+  .check .name { font-weight: 600; } .check .what { color: #59636e; margin-left: auto; } .check a { margin-left: 14px; color: #0969da; text-decoration: none; }
+  .last .icon { background: #bf8700; } .last .icon::before { content: "…"; }
+  .failure, .passed, .blocked, .ready { display: none; }
+  .merge { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: #f6f8fa; border-top: 1px solid #d1d9e0; }
+  button { font: inherit; font-weight: 600; padding: 8px 18px; border-radius: 8px; border: 0; background: #1a7f37; color: #fff; cursor: pointer; transition: background .35s, color .35s; }
+  .merge span { color: #59636e; }
+
+  [data-state="failed"] .last .icon { background: #d1242f; } [data-state="failed"] .last .icon::before { content: "✕"; }
+  [data-state="failed"] .going, [data-state="failed"] .waiting { display: none; }
+  [data-state="failed"] .failure { display: inline; color: #d1242f; }
+  [data-state="failed"] .blocked { display: inline; color: #d1242f; }
+  [data-state="failed"] button { background: #eaeef2; color: #8c959f; }
+  [data-state="passed"] .last .icon { background: #1a7f37; } [data-state="passed"] .last .icon::before { content: "✓"; }
+  [data-state="passed"] .going, [data-state="passed"] .waiting { display: none; }
+  [data-state="passed"] .passed, [data-state="passed"] .ready { display: inline; }
+</style>
+</head>
+<body>
+  <header><b data-slot="repo">acme / app</b><span>Pull requests</span></header>
+  <main>
+    <h1><span data-slot="title">Faster customer filter</span> <small>#<span data-slot="number">212</span></small></h1>
+    <div class="meta"><span class="open">Open</span><span data-slot="author">maya</span> wants to merge 3 commits into main</div>
+    <div class="box" data-testid="checks">
+      <h2>Checks</h2>
+      <div class="check ok"><span class="icon"></span><span class="name">Unit tests</span><span class="what">412 passed</span></div>
+      <div class="check ok"><span class="icon"></span><span class="name">Lint and types</span><span class="what">No problems</span></div>
+      <div class="check last" data-testid="last-check"><span class="icon"></span><span class="name" data-slot="check">Release check</span>
+        <span class="what"><span class="going" data-slot="going">Trying the app like a customer…</span><span class="failure" data-slot="failure">The checkout takes an invalid card</span><span class="passed" data-slot="passed">Every flow works</span></span><a href="#">Details</a></div>
+      <div class="merge"><button>Merge pull request</button><span class="waiting">Two of three checks have passed.</span><span class="blocked">Merging is blocked: a check failed.</span><span class="ready">All checks have passed.</span></div>
+    </div>
+  </main>
+</body>
+</html>

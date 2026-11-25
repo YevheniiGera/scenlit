@@ -1,0 +1,41 @@
+{
+  "app": {
+    "url": "http://localhost:4174",
+    "start": "node app/server.mjs",
+    "as": "app.ledgerly.example"
+  },
+  "brand": {
+    "name": "Ledgerly",
+    "url": "ledgerly.example",
+    "background": "#0b1020",
+    "glow": "#1b2f66",
+    "accent": "#5b8cff"
+  },
+  "data": {
+    "date": "2026-03-02T09:30:00",
+    "blur": [
+      ".email"
+    ]
+  },
+  "model": {
+    "provider": "claude-code"
+  },
+  "voice": {
+    "provider": "none"
+  },
+  "looks": {
+    "marketing": {
+      "viewport": {
+        "width": 1120,
+        "height": 700
+      },
+      "hide": [
+        "header > input.search",
+        "header > button.bell",
+        "header > div.avatar",
+        "footer",
+        "div.help"
+      ]
+    }
+  }
+}

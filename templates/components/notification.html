@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" data-state="shown">
+<head>
+<meta charset="utf-8">
+<title>Notification</title>
+<meta name="scenlit:host" content="notifications">
+<!-- A notification banner, as a desktop shows one. Generic: not any one system's.
+     Made to be laid over a film while it carries on:
+       await overlay("component:notification", { data: { app: "Mail", initial: "M", title: "…", body: "…" } });
+     States:  shown
+     Slots:   app, initial (the letter in the icon), time, title, body
+     Looks:   ?tone=dark (a dark banner) · ?icon=green | orange | red | black (the icon's colour; blue when left out)
+     What an overlay shows is the element marked data-overlay, with room around it for its shadow. -->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: transparent; }
+  body { padding: 48px; font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  .note { width: 372px; display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 14px 16px; border-radius: 18px; background: #fffffff5; color: #17181c; box-shadow: 0 18px 44px -14px #00000073, 0 0 0 1px #00000012; }
+  .icon { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 18px; background: linear-gradient(140deg, #4f8df7, #1f5fd6); box-shadow: inset 0 1px 0 #ffffff40; }
+  [data-icon="green"] .icon { background: linear-gradient(140deg, #27a971, #0f6a45); }
+  [data-icon="orange"] .icon { background: linear-gradient(140deg, #f5a03c, #d9641f); }
+  [data-icon="red"] .icon { background: linear-gradient(140deg, #ef6a5b, #c8321f); }
+  [data-icon="black"] .icon { background: linear-gradient(140deg, #3a3c44, #17181c); }
+  .top { display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; color: #7b7d85; }
+  .top b { font-weight: 600; color: #3f4148; }
+  .title { font-weight: 650; margin-top: 1px; }
+  .body { color: #3f4148; }
+  [data-tone="dark"] .note { background: #232429f5; color: #f3f3f1; box-shadow: 0 18px 44px -14px #000000b3, 0 0 0 1px #ffffff1f; }
+  [data-tone="dark"] .top, [data-tone="dark"] .body { color: #b9bbc2; }
+  [data-tone="dark"] .top b { color: #e4e4e1; }
+</style>
+</head>
+<body>
+  <div class="note" data-overlay data-testid="notification">
+    <span class="icon" data-slot="initial">M</span>
+    <div>
+      <div class="top"><b data-slot="app">Mail</b><span data-slot="time">now</span></div>
+      <div class="title" data-slot="title">A new message</div>
+      <div class="body" data-slot="body">Something happened that you will want to see.</div>
+    </div>
+  </div>
+</body>
+</html>

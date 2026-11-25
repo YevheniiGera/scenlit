@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" data-state="quiet">
+<head>
+<meta charset="utf-8">
+<title>Team chat</title>
+<meta name="scenlit:host" content="chat.example.com/releases">
+<!-- A team chat channel. A generic chat screen, not any one product's.
+     States:  quiet (the earlier messages only) · message (a new message arrives) · thread (a reply under it)
+     Slots:   workspace, channel, earlier1, earlier2, author, text, reply-author, reply, and their times: time1, time2, time, reply-time
+     Controls: "Reply", "Open" (the link in the new message) -->
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; height: 100vh; display: grid; grid-template-columns: 250px 1fr; color: #1d1c1d; font: 15px/1.47 -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  aside { background: #1f2630; color: #c5ccd6; padding: 18px 14px; }
+  aside b { display: block; color: #fff; font-size: 17px; margin-bottom: 18px; }
+  aside div { padding: 5px 10px; border-radius: 6px; } aside .on { background: #344150; color: #fff; }
+  main { display: flex; flex-direction: column; background: #fff; min-width: 0; }
+  header { padding: 14px 24px; border-bottom: 1px solid #e3e1e6; font-weight: 700; font-size: 17px; }
+  .log { flex: 1; padding: 20px 24px; display: flex; flex-direction: column; justify-content: flex-end; gap: 16px; overflow: hidden; }
+  .msg { display: grid; grid-template-columns: 38px 1fr; gap: 12px; }
+  .face { width: 38px; height: 38px; border-radius: 8px; background: #d5dbe3; display: grid; place-items: center; font-weight: 700; color: #344150; }
+  .msg b { margin-right: 8px; } .msg small { color: #77737c; }
+  .new .face { background: #2f6fed; color: #fff; }
+  .new { opacity: 0; transform: translateY(12px); max-height: 0; overflow: hidden; transition: opacity .3s, transform .3s, max-height .3s; }
+  .new a { color: #1264a3; text-decoration: none; }
+  .act { display: flex; gap: 8px; margin-top: 8px; }
+  button { font: inherit; font-size: 13px; padding: 4px 12px; border-radius: 6px; border: 1px solid #c9c6ce; background: #fff; cursor: pointer; }
+  .reply { margin: 10px 0 0 0; padding-left: 14px; border-left: 3px solid #e3e1e6; display: none; }
+  .box { margin: 0 24px 22px; border: 1px solid #c9c6ce; border-radius: 10px; padding: 12px 14px; color: #77737c; }
+
+  [data-state="message"] .new, [data-state="thread"] .new { opacity: 1; transform: none; max-height: 300px; }
+  [data-state="thread"] .reply { display: block; }
+</style>
+</head>
+<body>
+  <aside><b data-slot="workspace">Acme</b><div># general</div><div class="on"># <span data-slot="channel">releases</span></div><div># support</div><div># random</div></aside>
+  <main>
+    <header># <span data-slot="channel">releases</span></header>
+    <div class="log">
+      <div class="msg"><span class="face">M</span><div><b>maya</b><small data-slot="time1">9:12</small><div data-slot="earlier1">2.2 is on staging. Can we ship today?</div></div></div>
+      <div class="msg"><span class="face">J</span><div><b>jonas</b><small data-slot="time2">9:14</small><div data-slot="earlier2">Tests are green on my side.</div></div></div>
+      <div class="msg new" data-testid="message"><span class="face">A</span><div><b data-slot="author">Release bot</b><small data-slot="time">9:15</small>
+        <div><span data-slot="text">2.2 is not ready: the checkout takes an invalid card.</span> <a href="#">Open</a></div>
+        <div class="act"><button>Reply</button></div>
+        <div class="reply"><b data-slot="reply-author">maya</b><small data-slot="reply-time">9:16</small><div data-slot="reply">Good catch. Holding the release.</div></div></div></div>
+    </div>
+    <div class="box">Message #<span data-slot="channel">releases</span></div>
+  </main>
+</body>
+</html>

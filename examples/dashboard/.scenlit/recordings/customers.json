@@ -1,0 +1,14 @@
+{
+  "steps": {
+    "open the customer Initech": [
+      {
+        "do": "click",
+        "loc": {
+          "role": "clickable",
+          "name": "Initech office@initech.example Starter Past due $90",
+          "nth": 0
+        }
+      }
+    ]
+  }
+}

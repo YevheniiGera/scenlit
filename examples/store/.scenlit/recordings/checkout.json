@@ -1,0 +1,67 @@
+{
+  "steps": {
+    "add the Trail Mug and the Canvas Tote to the cart": [
+      {
+        "do": "click",
+        "loc": {
+          "role": "button",
+          "name": "Add Trail Mug to cart",
+          "nth": 0
+        }
+      },
+      {
+        "do": "click",
+        "loc": {
+          "role": "button",
+          "name": "Add Canvas Tote to cart",
+          "nth": 0
+        }
+      }
+    ],
+    "open the cart and go to checkout": [
+      {
+        "do": "click",
+        "loc": {
+          "testid": "cart",
+          "name": "Cart2"
+        }
+      },
+      {
+        "do": "click",
+        "loc": {
+          "role": "button",
+          "name": "Continue to payment",
+          "nth": 0
+        }
+      }
+    ],
+    "fill in the email {email} and the card number {card}, then pay": [
+      {
+        "do": "fill",
+        "loc": {
+          "role": "textbox",
+          "name": "Email",
+          "nth": 0
+        },
+        "value": "{email}"
+      },
+      {
+        "do": "fill",
+        "loc": {
+          "role": "textbox",
+          "name": "Card number",
+          "nth": 0
+        },
+        "value": "{card}"
+      },
+      {
+        "do": "click",
+        "loc": {
+          "role": "button",
+          "name": "Pay $62",
+          "nth": 0
+        }
+      }
+    ]
+  }
+}
