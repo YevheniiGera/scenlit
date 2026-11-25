@@ -715,7 +715,7 @@ const film = (tempo, measure, speed = 1) => {
     }
     for (const x of own) if (x.at === "end") ring(x.name, t + x.delay, x.volume); // and when it ends
     for (const e of until) { hide(e, t, 250); if (e.tagName === "A") to(e, "visibility", t + 250, 1, "hidden"); } // a link that is gone cannot be clicked
-    ranges.push({ from: t0, to: t + 250 });
+    ranges.push({ from: t0, to: t + 250, src: s.src ?? null }); // src: the scene line the step was written on
     const next = D.steps[i + 1];
     if (ff && !(next?.fast > 1)) { hide(ff, t, 250); ff = null; }
     if (s.kind === "piece") { if (!(next?.kind === "piece" || (next?.kind === "words" && !next.words.beside))) { show(win, t + 200, 450); back(t + 400); } t += 450; } // the window comes back, unless another piece or a sentence follows
@@ -911,8 +911,9 @@ const film = (tempo, measure, speed = 1) => {
   // second), step (which step is on screen; -1: the title, -2: the end), ask (the film waits for the viewer) and link
   // (the viewer followed a link or a button: its text and address).
   // It can say: { scenlit: { do: "play" | "pause" | "seek" | "sound" | "ready", at: seconds, on: true } } ("ready": tell me again)
-  // ready also says where the app's window comes in, where each step begins and ends, and where the end card begins
-  const sec = (ms) => +(ms / 1000).toFixed(2), timing = () => ({ seconds: sec(total), opens: sec(opens), steps: ranges.map((r) => [sec(r.from), sec(r.to)]), end: sec(endAt) });
+  // ready also says where the app's window comes in, where each step begins and ends (and the scene line it was
+  // written on: lines), and where the end card begins
+  const sec = (ms) => +(ms / 1000).toFixed(2), timing = () => ({ seconds: sec(total), opens: sec(opens), steps: ranges.map((r) => [sec(r.from), sec(r.to)]), lines: ranges.map((r) => r.src), end: sec(endAt) });
   const tell = (event, more) => { if (parent !== window) parent.postMessage({ scenlit: { event, at: +(now / 1000).toFixed(2), ...more } }, "*"); };
   const cueAt = (ms) => { if (!ranges.length || ms < ranges[0].from) return -1; if (ms >= endAt) return -2; let k = 0; ranges.forEach((r, i) => { if (ms >= r.from) k = i; }); return k; };
   let cue = null, told = -1000;
