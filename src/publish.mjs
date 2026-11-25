@@ -12,9 +12,12 @@ import { loadCapture } from "./scene.mjs";
 
 const STRIP = 20; // how many moments of the film the portal gets as small pictures (the audience is shown over them)
 const keysFile = () => join(process.env.SCENLIT_HOME ?? join(homedir(), ".scenlit"), "keys.json");
+// where to publish: --to, else SCENLIT_PORTAL, else "portal" in .scenlit/config.json, else the one portal this
+// computer is connected to (scenlit connect keeps a token for each), so after connecting once a command needs no address
 export const portalOf = (p, to = null) => {
-  const address = to ?? process.env.SCENLIT_PORTAL ?? p.config.portal;
-  if (!address) throw new Error('which portal? --to <address>, or "portal" in .scenlit/config.json');
+  const connected = Object.keys(readKeys());
+  const address = to ?? process.env.SCENLIT_PORTAL ?? p.config.portal ?? (connected.length === 1 ? connected[0] : null);
+  if (!address) throw new Error(connected.length > 1 ? `this computer is connected to more than one portal (${connected.join(", ")}): say which with --to <address>` : 'which portal? --to <address>, or "portal" in .scenlit/config.json');
   return String(address).replace(/\/+$/, "");
 };
 

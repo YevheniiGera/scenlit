@@ -594,7 +594,7 @@ and what's new, and shows how each video was watched:
 
 ```sh
 npx scenlit connect --to https://platform.example   # once per computer: you approve it in the browser (GitHub or Google)
-npx scenlit publish checkout                        # with "portal" in config.json, or --to
+npx scenlit publish checkout                        # to the portal this computer is connected to
 # published: https://platform.example/f/k3x9m2pq7a  (version 1)
 # embed:     https://platform.example/e/k3x9m2pq7a
 # product:   https://platform.example/ledgerly

@@ -59,7 +59,7 @@ data, a button still disabled), and a step that fails says how long it waited.
 window no longer leaves for an empty background, unless `motion.exit` asks for it.
 
 **Publishing.** `scenlit connect` connects a computer to a Scenlit platform (approved in the browser, with GitHub or
-Google); `scenlit publish <scene>` gives the video a link, an embed and a place on its product's page (demos, help
+Google), once: after that, commands publish there with no address to give; `scenlit publish <scene>` gives the video a link, an embed and a place on its product's page (demos, help
 with the step-by-step guide, what's new), sends its screenshots as pictures whose addresses stay current, and keeps the newest three versions. `--private` keeps it to the product's people, `--kind` chooses where it is shown,
 `--listed` puts it on the platform's front page. In CI, `SCENLIT_TOKEN` is a product's token. A scene may say
 `kind: "news"`. The platform lives in its own repository. The player tells the page around it when a link is followed

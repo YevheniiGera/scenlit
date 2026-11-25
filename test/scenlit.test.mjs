@@ -13,6 +13,7 @@ import { writeGuide } from "../src/guide.mjs";
 import { init } from "../src/init.mjs";
 import { parseActions, promptFor } from "../src/model.mjs";
 import { writePosts } from "../src/post.mjs";
+import { portalOf } from "../src/publish.mjs";
 import { outline, runScene } from "../src/scene.mjs";
 import { check, frames } from "../src/site.mjs";
 
@@ -955,4 +956,23 @@ test("a film can show its own scene file, the playing line lit; words stack as l
     const made = await film.evaluate(() => ({ fields: document.querySelectorAll(".field").length, stacks: document.querySelectorAll(".say.stack").length, lines: document.querySelectorAll(".say.stack .line").length, nums: document.querySelectorAll(".say.stack .num").length, ink: getComputedStyle(document.querySelector(".say.poster")).color }));
     assert.deepEqual(made, { fields: 1, stacks: 2, lines: 4, nums: 2, ink: "rgb(12, 12, 12)" });
   } finally { await b2.close(); }
+});
+
+test("after connecting once, publishing needs no address: the one portal this computer is connected to", () => {
+  const home = mkdtempSync(join(tmpdir(), "scenlit-home-")), was = { home: process.env.SCENLIT_HOME, portal: process.env.SCENLIT_PORTAL };
+  process.env.SCENLIT_HOME = home; delete process.env.SCENLIT_PORTAL;
+  try {
+    const p = { config: {} };
+    assert.throws(() => portalOf(p), /which portal/);
+    writeFileSync(join(home, "keys.json"), JSON.stringify({ "https://portal.example": "t1" }));
+    assert.equal(portalOf(p), "https://portal.example");
+    assert.equal(portalOf(p, "http://localhost:8787/"), "http://localhost:8787", "--to still wins");
+    assert.equal(portalOf({ config: { portal: "https://other.example" } }), "https://other.example", "and so does the project's own");
+    writeFileSync(join(home, "keys.json"), JSON.stringify({ "https://portal.example": "t1", "http://localhost:8787": "t2" }));
+    assert.throws(() => portalOf(p), /more than one portal/);
+  } finally {
+    if (was.home === undefined) delete process.env.SCENLIT_HOME; else process.env.SCENLIT_HOME = was.home;
+    if (was.portal !== undefined) process.env.SCENLIT_PORTAL = was.portal;
+    rm(home, { recursive: true, force: true });
+  }
 });

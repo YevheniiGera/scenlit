@@ -52,7 +52,7 @@ const HELP = `scenlit: films, posts, screenshots and guides made from your real 
   site                           one page listing everything that was made
   connect [--to address]         connect this computer to the platform (you approve it in the browser, with GitHub or Google)
   disconnect                     this computer may no longer publish there
-  publish <scene> [--to address] the video gets a link on the platform: a page to watch it on, an embed, who watched it
+  publish <scene> [--to address] the video gets a link on the platform (the one this computer is connected to): a page to watch it on, an embed, who watched it
       --kind demo|help|news      where its product's page shows it (else: the scene's "kind"; a tutorial is help)
       --private | --public       only your product's people may watch it (or anyone with the link again)
       --listed | --unlisted      on Scenlit's front page, with the scene that made it (or off it again)
