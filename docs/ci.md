@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm ci
-      - uses: YevheniiGera/scenlit@v0.1.0   # the action in this repository
+      - uses: YevheniiGera/scenlit@v0.1.1   # the action in this repository
 ```
 
 What it needs from your repository:
@@ -30,5 +30,3 @@ What it needs from your repository:
   repository secret. `run --all` runs scenes in name order, so name it to come first (`00-signin`).
 
 The films and posts are in the run's artifact. Nothing is posted anywhere.
-
-This action has not been run on GitHub yet: it was written with the tool and checked by reading, not by a run.

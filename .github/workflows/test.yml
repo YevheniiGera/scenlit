@@ -1,18 +1,40 @@
-# Runs the tests on every push to main and every pull request.
-# On a Mac, where Scenlit is developed: Chrome is already on the runner, and the tests use the Mac's own voice.
+# Runs the tests on every push to master and every pull request: on a Mac, where Scenlit is developed (Chrome is
+# already there, and the tests use the Mac's own voice), and on Linux, where CI and most servers run. Then the
+# action in this repository (action.yml) runs the store example's scenes, as a project using it would.
 name: Tests
 on:
-  push: { branches: [main] }
+  push: { branches: [master] }
   pull_request:
+  workflow_dispatch:
 permissions: { contents: read }
 jobs:
   test:
-    runs-on: macos-latest
-    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix: { os: [macos-latest, ubuntu-latest] }
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
-      - run: brew install ffmpeg
+      - if: runner.os == 'macOS'
+        run: brew install ffmpeg
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update -q && sudo apt-get install -yq ffmpeg
       - run: npm ci
       - run: npm test
+
+  action:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      # the example installs this checkout of the tool, as a project installs it from npm
+      - run: npm init -y && npm i -D ../..
+        working-directory: examples/store
+      - uses: ./
+        with: { working-directory: examples/store, artifact: store-films }

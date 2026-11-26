@@ -2,10 +2,8 @@
 // Run it from the example folder:  node ../../bin/cli.mjs run checkout
 /** @type {import("scenlit").Scene} */
 export default {
-  title: { lead: "Every test is green.", key: "Does the checkout work?" },
-  end: { lead: "Made from one scene file", key: "and the real app." },
-
-  async run({ open, act, see, shot }) {
+  async run({ card, open, act, see, shot }) {
+    await card("Every test is green.", "Does the checkout work?");
     await open("/");
     await act("add the Trail Mug and the Canvas Tote to the cart", { say: "A customer picks two things." });
     await act("open the cart and go to checkout", { say: "Then goes to checkout." });
@@ -16,6 +14,7 @@ export default {
     });
     await see("Thank you for your order");
     await shot("paid", { crop: { testid: "order" } });
+    await card("Made from one scene file", "and the real app.");
   },
 
   posts: [

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1 (2026-11-26)
+
+- The README links to the docs at [scenlit.dev/docs](https://scenlit.dev/docs).
+- The example scenes use `card()` in `run()` for their opening and end, as new scenes do.
+- Tested on Linux as well as macOS, and the GitHub Action ran on GitHub for the first time: this repository runs both on
+  every pull request.
+- `find` says why the gallery was not searched (no platform, more than one, or out of reach).
+
 ## 0.1.0 (2026-11-26)
 
 The first release.
