@@ -2,11 +2,10 @@
 // Run `node ../../bin/cli.mjs run signin` first: it saves the login this scene starts from.
 /** @type {import("scenlit").Scene} */
 export default {
-  title: { lead: "Who is behind on payment?", key: "One filter answers it." },
-  end: { lead: "Your customers,", key: "at a glance." },
   as: "member",
 
-  async run({ open, act, select, hover, click, point, zoom, label, see, shot, mock, replace, chapter }) {
+  async run({ card, open, act, select, hover, click, point, zoom, label, see, shot, mock, replace, chapter }) {
+    await card("Who is behind on payment?", "One filter answers it.");
     // the app asks its own API for customers: answer with sample ones
     await mock("/api/customers", [
       { name: "Acme Inc", email: "billing@acme.example", plan: "Business", mrr: 1250, status: "Active", since: "2024-11-02" },
@@ -30,6 +29,7 @@ export default {
     await shot("customer", { crop: { selector: "#panel" } });
     await click("Close");
     await shot("overdue", { save: "docs/img/overdue.png" });
+    await card("Your customers,", "at a glance.");
   },
 
   posts: [{ name: "overdue", lead: "Who is behind on payment?", key: "One filter answers it.", line: "Ledgerly shows every customer's status at a glance.", shot: "overdue" },

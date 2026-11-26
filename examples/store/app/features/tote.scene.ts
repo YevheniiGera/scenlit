@@ -2,12 +2,12 @@
 import type { Scene } from "scenlit";
 
 const scene: Scene = {
-  title: { lead: "A scene can live", key: "next to its feature." },
-  end: { lead: "Found by its name:", key: "tote.scene.ts" },
-  async run({ open, click, see }) {
+  async run({ card, open, click, see }) {
+    await card("A scene can live", "next to its feature.");
     await open("/");
     await click("Add Canvas Tote to cart", { say: "Typed, and found anywhere in the repo." });
     await see("Added");
+    await card("Found by its name:", "tote.scene.ts");
   },
 };
 export default scene;

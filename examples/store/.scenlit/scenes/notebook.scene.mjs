@@ -1,10 +1,8 @@
 // One click adds the Field Notebook to the cart, and the cart shows the total.
 /** @type {import("scenlit").Scene} */
 export default {
-  title: { lead: "Adding to the cart", key: "takes one click." },
-  end: { lead: "One click,", key: "and the total is there." },
-
-  async run({ open, click, point, zoom, see, shot }) {
+  async run({ card, open, click, point, zoom, see, shot }) {
+    await card("Adding to the cart", "takes one click.");
     await open("/");
     await point({ selector: ".card:last-child" }, { say: "Here is the Field Notebook, $16." });
     await click("Add Field Notebook to cart", { say: "One click adds it to the cart." });
@@ -15,6 +13,7 @@ export default {
     await zoom({ selector: ".row.total" }, { say: "And it shows the total: $16." });
     await see("Total");
     await shot("cart", { crop: { selector: ".panel" } });
+    await card("One click,", "and the total is there.");
   },
 
   posts: [

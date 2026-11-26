@@ -105,7 +105,7 @@ test("find says what each piece is and how a scene uses it, with a picture to lo
   const cuts = (await find(p, "zip", { kind: "motion", gallery: false })).results;
   assert.deepEqual(cuts.map((r) => [r.where, r.name, r.use[0]]), [["yours", "zip", '"style": { "motion": { "cut": "zip" } }']]);
   assert.ok((await find(p, "", { kind: "sound", gallery: false })).results.some((r) => r.name === "ding" && r.about));
-  assert.match((await find(p, "chat")).note ?? "", /no platform known/, "without a platform, it says the gallery was not searched");
+  assert.match((await find(p, "chat", { to: "http://127.0.0.1:9" })).note ?? "", /the gallery was not searched: .*could not be reached/, "a platform out of reach: it says the gallery was not searched, and why");
 });
 
 test("check reads a scene without running it", async () => {
@@ -343,7 +343,7 @@ test("a scene is found anywhere in the project, TypeScript included, and a login
   const p = project(example("store"));
   assert.ok(p.sceneNames().includes("tote"), "app/features/tote.scene.ts");
   assert.match(p.sceneFiles().get("tote"), /app\/features\/tote\.scene\.ts$/);
-  if (process.features?.typescript) assert.equal((await p.loadScene("tote")).title.key, "next to its feature.");
+  if (process.features?.typescript) assert.equal(typeof (await p.loadScene("tote")).run, "function", "a TypeScript scene loads");
   const root = mkdtempSync(join(tmpdir(), "scenlit-sess-"));
   mkdirSync(join(root, ".scenlit"), { recursive: true });
   writeFileSync(join(root, ".scenlit/config.json"), JSON.stringify({ sessions: { member: "playwright/.auth/user.json" } }));
@@ -735,7 +735,8 @@ test("the player is the project's own, and a film can stop for the viewer, mark 
   const p = project(example("dashboard"));
   await runScene(p, await p.loadScene("signin"), { ...quiet, strict: true });
   const base = await p.loadScene("numbers", { format: null });
-  const scene = { ...base, name: "numbers-hands", style: { player: { controls: ["play", "scrub", "time", "captions", "speed", "chapters"], accent: "#3366ff", poster: 3 } }, run: async ({ open, select, chapter, link, button }) => {
+  const scene = { ...base, name: "numbers-hands", style: { player: { controls: ["play", "scrub", "time", "captions", "speed", "chapters"], accent: "#3366ff", poster: 3 } }, run: async ({ card, open, select, chapter, link, button }) => {
+    await card("The numbers", "arrive on their own.");
     await open("/");
     await select("Status", "Past due", { say: "Choose who is behind.", byViewer: true });
     await chapter("Then", "take them with you.");
@@ -791,7 +792,7 @@ test("the player is the project's own, and a film can stop for the viewer, mark 
     await page.click("#cc");
     assert.ok(await page.evaluate(() => document.querySelector("#stage").classList.contains("nocap")));
     await page.click("#chap");
-    assert.deepEqual(await page.evaluate(() => [...document.querySelectorAll("#chapters button")].map((b) => b.textContent.replace(/^\S+\s+/, ""))), [`${scene.title.lead} ${scene.title.key}`, "Then take them with you."]);
+    assert.deepEqual(await page.evaluate(() => [...document.querySelectorAll("#chapters button")].map((b) => b.textContent.replace(/^\S+\s+/, ""))), ["The numbers arrive on their own.", "Then take them with you."]);
     await page.click("#chapters button:nth-child(2)");
     const mark = await page.evaluate(() => window.__film.chapters[0].at);
     await page.click("#pp");

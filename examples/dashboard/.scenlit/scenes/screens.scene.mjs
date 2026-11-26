@@ -2,11 +2,10 @@
 // No app and no model: `open("component:<name>")` works without copying anything into the project.
 /** @type {import("scenlit").Scene} */
 export default {
-  title: { lead: "The story around your app:", key: "five screens, ready to use." },
-  end: { lead: "Fill them with your words,", key: "and film them like a page." },
   style: { camera: { zoom: 1 } },
 
-  async run({ open, state, click, point, see, shot, chapter }) {
+  async run({ card, open, state, click, point, see, shot, chapter }) {
+    await card("The story around your app:", "five screens, ready to use.");
     await open("component:pull-request", { data: { repo: "ledgerly / app", title: "Faster customer filter", failure: "The Past due filter shows no customers" } });
     await state("failed", { say: "A pull request, when a check fails." });
     await shot("pull-request", { crop: { testid: "checks" } });
@@ -31,6 +30,7 @@ export default {
     await state("assigned", { say: "A ticket, taken and closed." });
     await state("done");
     await shot("issue", { crop: { testid: "details" } });
+    await card("Fill them with your words,", "and film them like a page.");
   },
 
   posts: [{ name: "screens", lead: "The story around your app:", key: "ready to use.", shots: ["pull-request", "chat"], sizes: ["portrait"] }],

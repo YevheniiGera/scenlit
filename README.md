@@ -6,6 +6,8 @@ You write a scene: what happens, in plain language. Scenlit runs it in a real br
 out the clicks with a model the first time, and records them. After that the scene replays with no model, in
 seconds. Every release gets its film made again.
 
+**[Docs](https://scenlit.dev/docs)** · [Examples](https://scenlit.dev/#make) · [npm](https://www.npmjs.com/package/scenlit) · [Changelog](CHANGELOG.md)
+
 ```js
 // .scenlit/scenes/checkout.scene.mjs
 export default {
@@ -873,13 +875,12 @@ be made fails the build.
 - The film is built from frozen pages (or screenshots) of the app plus the frames recorded during each action. It is not a live page:
   things that move on their own between actions (a spinner, a chart animating in) show as they were when the
   picture was taken.
-- Web apps only, in Chrome. Developed on a Mac; Windows and Linux are not tested yet.
+- Web apps only, in Chrome. Tested on macOS and Linux; Windows is not tested yet.
 - A sign-in that needs a code from an email is not handled; authenticator codes are (`totp`).
 - Narration is timed per step, not per word.
 - A recording made by an earlier version of Scenlit is not reused when its shape has changed: the scene says so and is run again.
 - The camera stays still while the next action is comfortably in view, and glides when it moves; the cursor
   travels in a slight arc.
-- The GitHub Action is written but has not been run on GitHub yet.
 
 ## Examples and tests
 

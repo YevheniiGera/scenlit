@@ -39,7 +39,7 @@ export async function find(p, query = "", { kind = null, to = null, gallery = tr
   const ws = words(query), found = local(p).filter((r) => !kind || r.kind === kind);
   let portal = null, note = null;
   if (gallery) {
-    try { portal = portalOf(p, to); } catch { note = 'the gallery was not searched: no platform known ("portal" in .scenlit/config.json, or --to)'; }
+    try { portal = portalOf(p, to); } catch (e) { note = `the gallery was not searched: ${e.message}`; }
     if (portal) {
       try {
         const { pieces } = await call(portal, null, "GET", `/api/gallery?${new URLSearchParams({ q: ws.join(" "), ...(kind ? { kind } : {}), limit: String(limit) })}`);
