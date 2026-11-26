@@ -958,12 +958,12 @@ test("a film can show its own scene file, the playing line lit; words stack as l
   } finally { await b2.close(); }
 });
 
-test("after connecting once, publishing needs no address: the one portal this computer is connected to", () => {
+test("publishing needs no address: scenlit.dev, or the one portal this computer is connected to", () => {
   const home = mkdtempSync(join(tmpdir(), "scenlit-home-")), was = { home: process.env.SCENLIT_HOME, portal: process.env.SCENLIT_PORTAL };
   process.env.SCENLIT_HOME = home; delete process.env.SCENLIT_PORTAL;
   try {
     const p = { config: {} };
-    assert.throws(() => portalOf(p), /which portal/);
+    assert.equal(portalOf(p), "https://scenlit.dev", "not connected anywhere: scenlit.dev");
     writeFileSync(join(home, "keys.json"), JSON.stringify({ "https://portal.example": "t1" }));
     assert.equal(portalOf(p), "https://portal.example");
     assert.equal(portalOf(p, "http://localhost:8787/"), "http://localhost:8787", "--to still wins");

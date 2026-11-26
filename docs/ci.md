@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm ci
-      - uses: certyn/scenlit@v1        # the action in this repository
+      - uses: YevheniiGera/scenlit@v0.1.0   # the action in this repository
 ```
 
 What it needs from your repository:

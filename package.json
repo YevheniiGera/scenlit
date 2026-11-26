@@ -16,6 +16,14 @@
   ],
   "license": "Apache-2.0",
   "author": "Certyn (https://certyn.io)",
+  "homepage": "https://scenlit.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YevheniiGera/scenlit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YevheniiGera/scenlit/issues"
+  },
   "type": "module",
   "bin": {
     "scenlit": "bin/cli.mjs"

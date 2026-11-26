@@ -589,16 +589,17 @@ film; `ask` says the film is waiting for the viewer; `link` says they followed a
 
 ### Publish it: a link, a product page, and who watched
 
-A platform gives each video a link without you hosting anything, gives your product a page with its demos, help
-and what's new, and shows how each video was watched:
+[scenlit.dev](https://scenlit.dev) gives each video a link without you hosting anything, gives your product a page
+with its demos, help and what's new, and shows how each video was watched (`--to <address>`, or `"portal"` in
+config.json, for another platform):
 
 ```sh
-npx scenlit connect --to https://platform.example   # once per computer: you approve it in the browser (GitHub or Google)
-npx scenlit publish checkout                        # to the portal this computer is connected to
-# published: https://platform.example/f/k3x9m2pq7a  (version 1)
-# embed:     https://platform.example/e/k3x9m2pq7a
-# product:   https://platform.example/ledgerly
-npx scenlit portal                                  # your products, in the browser
+npx scenlit connect            # once per computer: you approve it in the browser
+npx scenlit publish checkout   # to the portal this computer is connected to
+# published: https://scenlit.dev/f/k3x9m2pq7a  (version 1)
+# embed:     https://scenlit.dev/e/k3x9m2pq7a
+# product:   https://scenlit.dev/ledgerly
+npx scenlit portal             # your products, in the browser
 ```
 
 - **The link stays.** Publishing the same scene again puts a new version behind the same link and embed. The platform

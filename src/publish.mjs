@@ -1,6 +1,6 @@
 // Publishing: a video gets a link on the platform, where anyone can watch it and its product's team sees how it was
 // watched. The same scene keeps the same link: publishing again puts a new version behind it.
-// You connect each computer once (`scenlit connect`: the browser asks you to approve it, with GitHub or Google); the
+// You connect each computer once (`scenlit connect`: the browser asks you to approve it); the
 // token is kept in ~/.scenlit/keys.json, never in the project. In CI the token comes from SCENLIT_TOKEN.
 import { execFile } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
@@ -13,11 +13,12 @@ import { loadCapture } from "./scene.mjs";
 const STRIP = 20; // how many moments of the film the portal gets as small pictures (the audience is shown over them)
 const keysFile = () => join(process.env.SCENLIT_HOME ?? join(homedir(), ".scenlit"), "keys.json");
 // where to publish: --to, else SCENLIT_PORTAL, else "portal" in .scenlit/config.json, else the one portal this
-// computer is connected to (scenlit connect keeps a token for each), so after connecting once a command needs no address
+// computer is connected to (scenlit connect keeps a token for each), else scenlit.dev
+export const PORTAL = "https://scenlit.dev";
 export const portalOf = (p, to = null) => {
   const connected = Object.keys(readKeys());
-  const address = to ?? process.env.SCENLIT_PORTAL ?? p.config.portal ?? (connected.length === 1 ? connected[0] : null);
-  if (!address) throw new Error(connected.length > 1 ? `this computer is connected to more than one portal (${connected.join(", ")}): say which with --to <address>` : 'which portal? --to <address>, or "portal" in .scenlit/config.json');
+  const address = to ?? process.env.SCENLIT_PORTAL ?? p.config.portal ?? (connected.length === 1 ? connected[0] : connected.length ? null : PORTAL);
+  if (!address) throw new Error(`this computer is connected to more than one portal (${connected.join(", ")}): say which with --to <address>`);
   return String(address).replace(/\/+$/, "");
 };
 
@@ -59,7 +60,7 @@ export function disconnect(p, { to = null } = {}) {
 export async function tokenFor(p, portal, log) {
   const t = process.env.SCENLIT_TOKEN ?? process.env.SCENLIT_KEY ?? readKeys()[portal];
   if (t) return t;
-  if (!process.stdin.isTTY || process.env.CI) throw new Error(`this computer is not connected to ${portal}: run scenlit connect --to ${portal}, or set SCENLIT_TOKEN (a product's token, from its settings)`);
+  if (!process.stdin.isTTY || process.env.CI) throw new Error(`this computer is not connected to ${portal}: run scenlit connect${portal === PORTAL ? "" : ` --to ${portal}`}, or set SCENLIT_TOKEN (a product's token, from its settings)`);
   await connect(p, { to: portal, log });
   return readKeys()[portal];
 }
@@ -142,7 +143,7 @@ export async function unpublish(p, sceneName, { to = null } = {}) {
   return film.link;
 }
 
-// your products on the platform, in the browser (it signs you in with GitHub or Google there)
+// your products on the platform, in the browser (it signs you in there)
 export function openPortal(p, { to = null, show = true } = {}) {
   const link = `${portalOf(p, to)}/app`;
   if (show) openInBrowser(link);

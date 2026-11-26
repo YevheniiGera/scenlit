@@ -50,7 +50,7 @@ const HELP = `scenlit: films, posts, screenshots and guides made from your real 
       --blur                     motion blur on everything that moves (takes five times as long)
   kit                            the app as a library of vector pieces: HTML, PDF and SVG of every named picture
   site                           one page listing everything that was made
-  connect [--to address]         connect this computer to the platform (you approve it in the browser, with GitHub or Google)
+  connect [--to address]         connect this computer to scenlit.dev, or another platform (you approve it in the browser)
   disconnect                     this computer may no longer publish there
   publish <scene> [more] | --all [--to address]
                                  the video gets a link on the platform (the one this computer is connected to): a page to watch it on, an embed, who watched it
