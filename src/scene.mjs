@@ -68,7 +68,7 @@ export async function runScene(p, scene, { record = false, headed = false, stric
   // vector: next to each picture the page itself is frozen (src/vector.mjs), and kept when it looks like the picture
   const judge = await context.newPage(); // a page of its own for comparing pictures
   const vector = look.vector ? { checker: await context.newPage(), judge, assets: new Map(), files: {}, tried: 0 } : null;
-  let n = 0, last = null, replaced = null;
+  let n = 0, last = null, replaced = null, ground = null; // ground: the app's own background colour, behind every picture in the film's window
   const later = {}; // a picture -> the one that stands in for it: the same page, with more of it marked for the film
   // fresh: a new picture even when the page looks the same (it now carries marks for the film). `replaced` is then the
   // picture it stands in for, when the page has not changed since that one was taken.
@@ -82,6 +82,9 @@ export async function runScene(p, scene, { record = false, headed = false, stric
     const file = `${String(n++).padStart(3, "0")}.jpg`;
     if (replaced) later[replaced] = file;
     writeFileSync(join(capDir, file), buf); last = { sum, file, buf };
+    // the colour under the app's pages, once: the film paints its window in it, so where a picture's edge meets the
+    // window's (drawn at a fraction of a pixel as the camera moves) no other colour shows through as a line
+    ground ??= await page.evaluate(() => { for (const e of [document.body, document.documentElement]) { const c = e && getComputedStyle(e).backgroundColor; if (c && c !== "transparent" && !/rgba\(.*,\s*0\)$/.test(c)) return c; } return null; }).catch(() => null);
     const host = await page.evaluate(() => document.querySelector('meta[name="scenlit:host"]')?.content ?? null).catch(() => null);
     if (host) hosts[file] = host; // a component says which address the film's window shows for it
     const at = await page.evaluate(() => [location.origin + location.pathname, document.title]).catch(() => [null, ""]);
@@ -489,7 +492,7 @@ export async function runScene(p, scene, { record = false, headed = false, stric
   }
   if (vector) { stats.vector = Object.keys(vector.files).length; stats.pictures = vector.tried; }
   const source = scene.file && existsSync(scene.file) ? readFileSync(scene.file, "utf8").split("\n") : null; // the scene's own lines, for a film that shows them
-  const capture = { v: CAPTURE, ...(source ? { source } : {}), view: { ...layout, device: look.device }, start, steps, shots, stats, vector: vector?.files ?? {}, hosts, pages, names, checks, look: lookName ?? scene.look ?? null, format: scene.asFormat ?? null, ...cards }; // format: the kind it was run as, when the command line said so. title, end: when run() said them
+  const capture = { v: CAPTURE, ...(source ? { source } : {}), view: { ...layout, device: look.device, ...(ground ? { ground } : {}) }, start, steps, shots, stats, vector: vector?.files ?? {}, hosts, pages, names, checks, look: lookName ?? scene.look ?? null, format: scene.asFormat ?? null, ...cards }; // format: the kind it was run as, when the command line said so. title, end: when run() said them
   Object.assign(scene, withCards(scene, capture));
   writeFileSync(join(capDir, "capture.json"), JSON.stringify(capture, null, 2));
   const actions = steps.reduce((s, x) => s + x.actions.length, 0);

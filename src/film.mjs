@@ -51,7 +51,7 @@ html,body{height:100%}
 body{background:${around(brand, style.background)};color:${brand.text};font-family:${brand.font};overflow:hidden}
 .bg{position:absolute;inset:0;background:${background(brand, style.background)}}
 ${style.background.dots && style.background.kind !== "image" ? `.bg:after{content:"";position:absolute;inset:0;background-image:radial-gradient(#ffffff14 1px,transparent 1.5px);background-size:44px 44px;-webkit-mask-image:linear-gradient(#000,transparent 70%);mask-image:linear-gradient(#000,transparent 70%)}` : ""}
-.win{position:absolute;border-radius:${win.radius}px;overflow:hidden;background:#fff;box-shadow:${SHADOW[win.shadow] ?? SHADOW.soft};transform-origin:0 0}
+.win{position:absolute;border-radius:${win.radius}px;overflow:hidden;background:var(--ground,#fff);box-shadow:${SHADOW[win.shadow] ?? SHADOW.soft};transform-origin:0 0}
 .bar{display:${win.bar === "none" ? "none" : "flex"};align-items:center;gap:8px;padding:0 18px;background:${light ? "#eceef1" : "#1a1d23"};color:${light ? "#5d6470" : "#9aa0aa"};font-size:15px}
 .bar .hosts{display:inline-grid}.bar .hosts b{grid-area:1/1;font-weight:400}
 .bar i{width:12px;height:12px;border-radius:50%;background:${light ? "#c9ced6" : "#3a3f48"};flex:none}.bar span{margin-left:14px;background:${light ? "#fff" : "#0f1115"};border-radius:8px;padding:5px 16px;white-space:nowrap}
@@ -69,7 +69,7 @@ const filmCss = (brand, style) => {
   return `
 #stage{position:absolute;left:50%;top:50%;overflow:hidden}
 .win{opacity:0}.view{position:relative;overflow:hidden}.shots{position:absolute;inset:0}.shots img{position:absolute;inset:0;width:100%;height:100%}
-.shots iframe{position:absolute;left:0;top:0;border:0;pointer-events:none;background:#fff;transform-origin:0 0}
+.shots iframe{position:absolute;left:0;top:0;border:0;pointer-events:none;background:var(--ground,#fff);transform-origin:0 0}
 .spot{position:absolute;border-radius:10px;box-shadow:0 0 0 4000px rgba(7,9,13,${style.spotlight})}
 .mark{position:absolute;border-radius:10px;border:3px solid var(--accent);box-shadow:0 0 0 6px #0000001f}
 .tag{position:absolute;background:#111418;color:#fff;font-size:20px;line-height:1;padding:10px 14px;border-radius:8px;white-space:nowrap;box-shadow:0 6px 20px #0006}
@@ -210,6 +210,17 @@ body.asking #big{display:none}
 // an app's own pages) has no place in a film that is published
 const placesOf = (pages = {}) => { const ids = new Map(); return Object.fromEntries(Object.entries(pages).map(([k, v]) => [k, ids.get(v) ?? (ids.set(v, ids.size + 1), ids.size)])); };
 
+// the app's own background colour, which the film's window is painted in. Captures record it; one made before they did
+// may still say it on its first vector page (a skin sets it on <html> or <body>). Else: none, and the window is white.
+const groundOf = (p, capture) => {
+  if (capture.view?.ground) return capture.view.ground;
+  const v = capture.vector?.[capture.start], f = v && join(p.captures, v);
+  if (!f || !existsSync(f)) return null;
+  const head = readFileSync(f, "utf8").slice(0, 200000), tag = (name) => new RegExp(`<${name}\\b[^>]*style="([^"]*)"`, "i").exec(head)?.[1] ?? "";
+  for (const css of [tag("body"), tag("html")]) { const c = /background-color:\s*(rgba?\([^)]*\)|#[0-9a-f]{3,8})/i.exec(css)?.[1]; if (c && !/rgba\(.*,\s*0\)$/.test(c)) return c; }
+  return null;
+};
+
 // a capture's pictures, addressed from .scenlit/captures: "<scene>/<file>"
 const within = (name, capture) => {
   const at = (f) => `${name}/${f}`;
@@ -263,7 +274,7 @@ function page(p, name, def, capture, clips, to = {}) {
   const me = presenterOf(p, def), presenter = me ? { ...me, file: to.presenter ?? relative(out, me.file) } : null;
   const data = {
     title: def.title, end: { url: brand.url, ...def.end }, host: def.host, shape: def.shape ?? "wide", sfx, cues, length: def.length > 0 ? +def.length : null,
-    view: capture.view, start: capture.start, steps: capture.steps.map((s) => (s.kind === "background" ? { ...s, css: background(brand, asBackground(p, s.background, style.background)) } : s)), vector: capture.vector ?? {}, hosts: capture.hosts ?? {}, pages: placesOf(capture.pages), names: capture.names ?? {}, clips,
+    view: { ...capture.view, ground: groundOf(p, capture) }, start: capture.start, steps: capture.steps.map((s) => (s.kind === "background" ? { ...s, css: background(brand, asBackground(p, s.background, style.background)) } : s)), vector: capture.vector ?? {}, hosts: capture.hosts ?? {}, pages: placesOf(capture.pages), names: capture.names ?? {}, clips,
     style: { player: style.player, window: style.window, cursor: style.cursor, camera: style.camera, captions: style.captions, titles: style.titles, end: style.end, pace: style.pace, logo: style.logo, motion: style.motion, sounds: style.sounds, finish: style.finish, board: style.board, select: style.select, source: !!style.source },
     ...(style.source && capture.source ? { source: capture.source } : {}), // the scene's own lines go into the film only when it shows them
     rel: to.rel ?? "../../captures", voiceRel: to.voiceRel ?? "../../voice", music, presenter, embed: !!to.embed,

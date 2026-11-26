@@ -49,6 +49,7 @@ const film = (tempo, measure, speed = 1) => {
   if (!measure) document.body.appendChild(stage);
   const win = el(`<div class="win${device ? " device" : ""}" style="left:${WIN.x}px;top:${WIN.y}px;width:${WIN.w}px;${device ? `--r:${(device === "phone" ? 46 : 28) * K}px;--edge:${12 * K}px` : ""}"><div class="bar" style="height:${F.bar}px"><i></i><i></i><i></i><span class="hosts"></span></div><div class="view" style="height:${viewH}px"><div class="shots"></div></div></div>`);
   const view = win.querySelector(".view"), pics = win.querySelector(".shots");
+  if (D.view.ground) win.style.setProperty("--ground", D.view.ground); // the app's own colour behind its pictures, not white
   // the window, the cursor and the rings of a click share one frame, so they turn in space together
   const rig = el(`<div class="rig"></div>`), FIN = S.finish ?? {}, bgEl = stage.querySelector(".bg"), TILT = SRC ? null : S.camera.tilt, PARA = S.camera.parallax || 0;
   if (FIN.light) stage.appendChild(el(`<div class="light" style="--light:${FIN.light === true ? "var(--accent)" : esc(FIN.light)}"></div>`)); // a soft light behind the window
@@ -268,6 +269,7 @@ const film = (tempo, measure, speed = 1) => {
   const sfx = [], ring = (name, at, vol = 1) => { if (name && D.sfx?.[name] && !background) sfx.push({ name, at, vol }); };
   // what moves on the app's own screen: found in the frozen pages once they have loaded, and things that follow the clock
   const inside = [], tickers = [];
+  const alonePieces = []; // a piece's frozen page and its mark: only the piece is left showing there (settle)
   const keys = (at, dur, chars) => { const n = Math.min(chars, Math.round(dur / 70)); for (let k = 0; k < n; k++) ring(S.sounds.type, at + (k * dur) / n, 0.7); }; // a key for each letter, as fast as fingers go
   // a card comes in the way the style says (rise, fade, or word by word), then its underline draws. Returns when it is all there.
   const reveal = (c, at, kind = "card") => {
@@ -623,6 +625,7 @@ const film = (tempo, measure, speed = 1) => {
           x += q.box.w * k + gapPx;
           const node = e.firstChild, at = t + 350 + n * 170;
           loads.push(loaded(node));
+          if (v) alonePieces.push({ node, id: q.id });
           stage.insertBefore(e, rig.nextSibling); start(e, "opacity", 0); start(e, "scale", "0.9");
           show(e, at, 350); to(e, "scale", at, 650, "1", "cubic-bezier(.2,1.2,.3,1)"); ring(S.sounds.piece, at);
           if (a.name && n === 0) { inside.push({ node, id: q.id, name: a.name, at: at + 500, dur, options: a.options ?? {} }); ring(S.sounds.animate, at + 500); if (a.name === "type") keys(at + 500, dur, a.chars ?? 12); }
@@ -818,6 +821,16 @@ const film = (tempo, measure, speed = 1) => {
       let e = null;
       try { e = (x.node ?? nodes[x.file])?.contentDocument?.querySelector(`[data-scenlit-a="${x.id}"]`); } catch { /* another origin */ }
       if (e) bricks.animate[x.name]?.({ el: e, at: x.at, dur: x.dur, options: x.options }, kit); else window.__film.still++;
+    }
+    // a piece is shown alone: the room around it (a bare line of text gets some) shows what holds it, not the edges of
+    // its neighbours. Everything else in its frozen page is hidden in place, so nothing moves.
+    for (const { node, id } of alonePieces) {
+      let doc = null;
+      try { doc = node.contentDocument; } catch { /* another origin: it shows as it was pictured */ }
+      if (!doc?.querySelector(`[data-scenlit-a="${id}"]`)) continue;
+      const a = `[data-scenlit-a="${id}"]`, css = doc.createElement("style");
+      css.textContent = `body *:not(:has(${a})):not(${a}):not(${a} *){visibility:hidden!important}`;
+      doc.head.appendChild(css);
     }
     build(); seek(now);
   };
