@@ -52,7 +52,8 @@ const HELP = `scenlit: films, posts, screenshots and guides made from your real 
   site                           one page listing everything that was made
   connect [--to address]         connect this computer to the platform (you approve it in the browser, with GitHub or Google)
   disconnect                     this computer may no longer publish there
-  publish <scene> [--to address] the video gets a link on the platform (the one this computer is connected to): a page to watch it on, an embed, who watched it
+  publish <scene> [more] | --all [--to address]
+                                 the video gets a link on the platform (the one this computer is connected to): a page to watch it on, an embed, who watched it
       --kind demo|help|news      where its product's page shows it (else: the scene's "kind"; a tutorial is help)
       --private | --public       only your product's people may watch it (or anyone with the link again)
       --listed | --unlisted      on Scenlit's front page, with the scene that made it (or off it again)
@@ -156,13 +157,20 @@ async function main() {
     return console.log(`connected to ${r.portal} as ${r.account.name || r.account.email}${r.products.length ? `\nyour products: ${r.products.map((x) => x.slug).join(", ")}` : ""}`);
   }
   if (cmd === "disconnect") { const r = (await import("../src/publish.mjs")).disconnect(p, { to: option(args, "to") }); return console.log(r.had ? `this computer is no longer connected to ${r.portal}` : `this computer was not connected to ${r.portal}`); }
-  if (cmd === "publish") {
-    const scene = await p.loadScene(need()), kind = option(args, "kind");
+  if (cmd === "publish") { // one scene, several (publish a b c), or every scene (--all)
+    const kind = option(args, "kind"), names = flag(args, "all") ? p.sceneNames() : rest.length ? rest : [need()];
     if (kind && !["demo", "help", "news"].includes(kind)) throw new Error("--kind demo, help or news");
-    (await import("../src/film.mjs")).writeFilm(p, scene);
-    const r = await (await import("../src/publish.mjs")).publish(p, scene, { to: option(args, "to"), kind, listed: flag(args, "listed") ? true : flag(args, "unlisted") ? false : null, private: flag(args, "private") ? true : flag(args, "public") ? false : null, log: say });
-    if (json) return console.log(JSON.stringify(r));
-    return console.log([`published: ${r.link}  (version ${r.version}${r.private ? ", private" : ""}${r.listed ? ", on Scenlit's front page" : ""})`, r.private ? null : `embed:     ${r.embed}`, r.help ? `help:      ${r.help}` : null, `product:   ${r.page}`, r.pictures ? `pictures:  ${r.pictures}, at addresses that stay (see the product's Pictures)` : null].filter(Boolean).join("\n"));
+    const { writeFilm } = await import("../src/film.mjs"), { publish } = await import("../src/publish.mjs"), done = [];
+    for (const n of names) {
+      const scene = await p.loadScene(n);
+      if (names.length > 1) say(`scene ${n}`);
+      writeFilm(p, scene);
+      const r = await publish(p, scene, { to: option(args, "to"), kind, listed: flag(args, "listed") ? true : flag(args, "unlisted") ? false : null, private: flag(args, "private") ? true : flag(args, "public") ? false : null, log: say });
+      done.push(r);
+      if (!json) console.log([`published: ${r.link}  (version ${r.version}${r.private ? ", private" : ""}${r.listed ? ", on Scenlit's front page" : ""})`, r.private ? null : `embed:     ${r.embed}`, r.help ? `help:      ${r.help}` : null, `product:   ${r.page}`, r.pictures ? `pictures:  ${r.pictures}, at addresses that stay (see the product's Pictures)` : null].filter(Boolean).join("\n"));
+    }
+    if (json) console.log(JSON.stringify(names.length > 1 ? done : done[0]));
+    return;
   }
   if (cmd === "add") {
     if (!name) throw new Error("add what? a folder, github:owner/repo[/path], a gallery address, or <product>/<name>");

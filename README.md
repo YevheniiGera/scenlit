@@ -810,7 +810,7 @@ be made fails the build.
 | `kit` | The app as a library of vector pieces |
 | `site` | One page listing everything: `.scenlit/output/index.html` |
 | `connect [--to address]`, `disconnect` | Connects this computer to the platform (you approve it in the browser), or no longer |
-| `publish <scene> [--to address] [--kind demo\|help\|news] [--private] [--listed]` | The video gets a link on the platform, its product's page shows it, and you see who watched |
+| `publish <scene> [more] \| --all [--to address] [--kind demo\|help\|news] [--private] [--listed]` | The video gets a link on the platform, its product's page shows it, and you see who watched. Several scenes in one go: name them, or `--all` |
 | `unpublish <scene>`, `portal` | Takes the video down; opens your products in the browser |
 
 ## Settings: `.scenlit/config.json`
